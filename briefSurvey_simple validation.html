@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator & Internal/Community UX Prototype</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for placeholder text color */
+        textarea::placeholder {
+            color: #6B7280; /* Tailwind's gray-500 */
+            opacity: 1; /* Firefox default opacity is lower */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div id="root"></div>
+
+    <!-- React and ReactDOM CDNs -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel for JSX transformation in the browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        // Function to generate 100 fictional users (copied from your provided data)
+        const generateFictionalUsers = () => {
+          const users = [];
+          const names = [
+            "Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy",
+            "Kevin", "Liam", "Mia", "Noah", "Olivia", "Peter", "Quinn", "Rachel", "Sam", "Tina",
+            "Umar", "Vera", "Walter", "Xena", "Yara", "Zane", "Anna", "Ben", "Catherine", "David",
+            "Emma", "Felix", "Georgia", "Harry", "Isabel", "Jack", "Karen", "Leo", "Megan", "Nathan",
+            "Oscar", "Pamela", "Quentin", "Rebecca", "Steven", "Tara", "Ursula", "Victor", "Wendy", "Xavier",
+            "Yvonne", "Zack", "Amber", "Brian", "Chloe", "Daniel", "Emily", "Finn", "Gabriella", "Henry",
+            "Iris", "Jake", "Kim", "Louis", "Maria", "Nora", "Owen", "Penelope", "Ronan", "Sophia",
+            "Thomas", "Uma", "Vincent", "Willow", "Zara", "Adam", "Bella", "Cody", "Daisy", "Ethan",
+            "Faith", "Gavin", "Hannah", "Isaac", "Jasmine", "Kyle", "Lily", "Max", "Nina", "Oliver",
+            "Paige", "Riley", "Sarah", "Tyler", "Violet", "Will", "Zara", "Aiden", "Brooke", "Caleb"
+          ];
+          const portfolios = [
+            "https://www.creativeportfolio.com/user1", "https://www.artstation.com/user2",
+            "https://www.behance.net/user3", "https://www.dribbble.com/user4",
+            "https://www.flickr.com/user5", "https://www.instagram.com/user6",
+            "https://www.unsplash.com/user7", "https://www.deviantart.com/user8",
+            "https://www.vimeo.com/user9", "https://www.youtube.com/user10"
+          ];
+
+          // Corrected and expanded city-country mapping for factual accuracy
+          const cityCountryMap = {
+            "London": "UK",
+            "New York": "USA",
+            "Paris": "France",
+            "Berlin": "Germany",
+            "Tokyo": "Japan",
+            "Sydney": "Australia",
+            "Toronto": "Canada",
+            "Madrid": "Spain",
+            "Rome": "Italy", // Corrected for Rome
+            "Beijing": "China",
+            "Los Angeles": "USA",
+            "Manchester": "UK",
+            "Lyon": "France",
+            "Munich": "Germany",
+            "Osaka": "Japan",
+            "Melbourne": "Australia",
+            "Vancouver": "Canada",
+            "Barcelona": "Spain",
+            "Milan": "Italy",
+            "Shanghai": "China"
+          };
+
+          const cities = Object.keys(cityCountryMap);
+          const genders = ["man", "woman", "non_binary", "prefer_not_to_say"];
+          const languages = ["english", "french", "spanish", "german", "chinese", "japanese"];
+          const origins = ["USA", "UK", "Canada", "France", "Germany", "Spain", "Japan", "China", "Australia", "Italy"]; // Added Australia, Italy for new cities
+          const ethnicities = ["White", "Black", "South_Asian", "East_and_SE_Asian", "Hispanic/Latin", "Middle_Eastern", "Pacific_Islander", "Other"];
+          const hairTypes = ["wavy", "curly", "bald", "straight", "coily", "other"];
+          const hairColours = ["black", "blond", "brunette", "brown", "red", "bald", "white_or_grey", "other"];
+          const tattoosOptions = ["none", "yes_not_visible", "yes_visible_face_neck_shoulders"];
+          const piercingsOptions = ["none", "yes_ear_piercing", "yes_not_visible", "yes_facial_piercings"];
+          const coStarsOptions = ["dog", "cat", "other_pets", "baby", "kids_2_6", "kids_7_12", "teenagers", "couple", "friends", "parents"];
+          const filmingLocations = ["house", "apartment", "car", "garden", "podcast_setup", "gaming_setup", "gym_fitness_studio", "in_house_laundry", "home_office_study", "countryside", "city", "beach"];
+
+          // Funny invented address components
+          const streetNumbers = ["42", "101", "7", "99", "666", "13"];
+          const streetNames = ["Whispering Willow Way", "Giggle Grove", "Rainbow Road", "Starlight Street", "Dragonfly Drive", "Mystic Meadow Lane", "Unicorn Alley", "Pixel Place"];
+          const streetTypes = ["Lane", "Road", "Avenue", "Street", "Boulevard", "Drive", "Place", "Circuit"];
+          const fantasticalAreas = ["Cloud City", "Moonbeam Metropolis", "Enchanted Forest", "Quantum Quarters", "Singing Sands", "Lost Lagoon"];
+          const zipCodes = ["90210", "50001", "ABCDE", "XY12Z"];
+
+          // Helper to get a random date for birthdate
+          const getRandomDate = (startYear, endYear) => {
+            const year = startYear + Math.floor(Math.random() * (endYear - startYear + 1));
+            const month = Math.floor(Math.random() * 12) + 1;
+            const day = Math.floor(Math.random() * 28) + 1; // Simplistic to avoid month-day issues
+            return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          };
+
+          for (let i = 0; i < 100; i++) {
+            const randomCity = cities[Math.floor(Math.random() * cities.length)];
+            const correspondingCountry = cityCountryMap[randomCity];
+
+            // Determine number of languages: 50% chance for 2-3 languages, 50% chance for 1-3 languages
+            let numLanguages;
+            if (i % 2 === 0) { // For roughly 50% of users
+              numLanguages = Math.floor(Math.random() * 2) + 2; // 2 or 3 languages
+            } else {
+              numLanguages = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3 languages
+            }
+
+            const user = {
+              id: `user-${i + 1}`, // Add a simple ID
+              name: names[i % names.length] + ' ' + (i + 1), // Make names unique
+              // Ensure Portfolio and Primary Work Location are always present
+              portfolio: portfolios[Math.floor(Math.random() * portfolios.length)],
+              primary_work_location: [randomCity, correspondingCountry],
+              date_of_birth: getRandomDate(1980, 2005),
+              gender: Math.random() < 0.8 ? genders[Math.floor(Math.random() * genders.length)] : null,
+              languages_spoken_fluently: Math.random() < 0.8 ? Array.from({
+                length: numLanguages
+              }, () => languages[Math.floor(Math.random() * languages.length)]) : null,
+              country_of_origin: Math.random() < 0.8 ? origins[Math.floor(Math.random() * origins.length)] : null,
+              ethnicity: Math.random() < 0.8 ? ethnicities[Math.floor(Math.random() * ethnicities.length)] : null,
+              co_stars: Math.random() < 0.8 ? Array.from({
+                length: Math.floor(Math.random() * 3)
+              }, () => coStarsOptions[Math.floor(Math.random() * coStarsOptions.length)]) : null,
+              filming_location: Math.random() < 0.8 ? Array.from({
+                length: Math.floor(Math.random() * 3) + 1
+              }, () => filmingLocations[Math.floor(Math.random() * filmingLocations.length)]) : null,
+            };
+
+            // Conditionally available fields (70% probability)
+            if (Math.random() < 0.7) {
+              const num = streetNumbers[Math.floor(Math.random() * streetNumbers.length)];
+              const street = streetNames[Math.floor(Math.random() * streetNames.length)];
+              const type = streetTypes[Math.floor(Math.random() * streetTypes.length)];
+              const area = fantasticalAreas[Math.floor(Math.random() * fantasticalAreas.length)];
+              const zip = zipCodes[Math.floor(Math.random() * zipCodes.length)];
+              user.Address = `${num} ${street} ${type}, ${area}, ${randomCity} ${zip}`;
+            } else {
+              user.Address = null;
+            }
+            if (Math.random() < 0.7) user.Mobile = `+1-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+            else user.Mobile = null;
+            if (Math.random() < 0.7) user.hair_type = hairTypes[Math.floor(Math.random() * hairTypes.length)];
+            else user.hair_type = null;
+            if (Math.random() < 0.7) user.hair_colour = hairColours[Math.floor(Math.random() * hairColours.length)];
+            else user.hair_colour = null;
+            if (Math.random() < 0.7) user.tattoos = tattoosOptions[Math.floor(Math.random() * tattoosOptions.length)];
+            else user.tattoos = null;
+            if (Math.random() < 0.7) user.piercings = piercingsOptions[Math.floor(Math.random() * piercingsOptions.length)];
+            else user.piercings = null;
+
+            users.push(user);
+          }
+          return users;
+        };
+
+        // Helper function to calculate age from date of birth
+        const calculateAge = (dobString) => {
+          if (!dobString) return null;
+          const dob = new Date(dobString);
+          const today = new Date();
+          let age = today.getFullYear() - dob.getFullYear();
+          const m = today.getMonth() - dob.getMonth();
+          if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+            age--;
+          }
+          return age;
+        };
+
+        // BackstageContent Component (previously the main App content)
+        const BackstageContent = ({
+          projectTitle, setProjectTitle,
+          projectCode, setProjectCode,
+          briefSummary, setBriefSummary,
+          standardQuestions, handleCheckboxChange,
+          navigateTo
+        }) => {
+          const [showFeedback, setShowFeedback] = React.useState(false); // State to control feedback message visibility
+
+          const handleSaveConfiguration = () => {
+            console.log("Saving Survey Configuration:", {
+              projectTitle,
+              projectCode,
+              briefSummary,
+              selectedQuestions: standardQuestions
+            });
+            // In a real application, you would send this data to a backend
+
+            setShowFeedback(true); // Show the feedback message
+            setTimeout(() => {
+              setShowFeedback(false); // Hide the feedback message after 3 seconds
+            }, 3000);
+          };
+
+          return (
+            <div className="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-xl relative">
+              {/* Navigation Button for Front Stage */}
+              <div className="absolute top-4 right-4">
+                <button
+                  onClick={() => navigateTo('frontstage')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
+                >
+                  Go to Creator UX
+                </button>
+              </div>
+
+              <h1 className="text-3xl font-extrabold text-gray-800 mb-8 pb-4 border-b-2 border-gray-200">
+                Internal/Community UX
+              </h1>
+
+              {/* Project Details Section */}
+              <div className="mb-8">
+                <div className="mb-6">
+                  <label htmlFor="projectTitle" className="block text-sm font-medium text-gray-700 mb-2">
+                    Project Title
+                  </label>
+                  <input
+                    type="text"
+                    id="projectTitle"
+                    name="projectTitle"
+                    value={projectTitle}
+                    onChange={(e) => setProjectTitle(e.target.value)}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                    placeholder="Enter project title"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label htmlFor="projectCode" className="block text-sm font-medium text-gray-700 mb-2">
+                    Project Code
+                  </label>
+                  <input
+                    type="text"
+                    id="projectCode"
+                    name="projectCode"
+                    value={projectCode}
+                    onChange={(e) => setProjectCode(e.target.value)}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                    placeholder="Enter project code"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label htmlFor="briefSummary" className="block text-sm font-medium text-gray-700 mb-2">
+                    Brief requirement summary
+                  </label>
+                  <textarea
+                    id="briefSummary"
+                    name="briefSummary"
+                    value={briefSummary}
+                    onChange={(e) => setBriefSummary(e.target.value)}
+                    rows="4"
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out placeholder-gray-500"
+                    placeholder="🌎 Based anywhere in the world.
+💬 Native or fluent English speakers.
+✨ Women aged 30-59.
+👉 You do not need to have had BOTOX and you will not be receiving any treatment."
+                  ></textarea>
+                </div>
+              </div>
+
+              {/* Standard Profile Questions Section */}
+              <div className="mb-8">
+                <h2 className="text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+                  Standard Profile Questions
+                </h2>
+                <p className="text-sm text-gray-600 mb-6">
+                  Select the questions you'd like to include in this brief application survey.
+                  <br />
+                  We'll ask, check, or indicate if we don't have the answer yet, or ask them to confirm it is up-to-date.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Checkbox for Portfolio */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="portfolio"
+                      name="portfolio"
+                      type="checkbox"
+                      checked={standardQuestions.portfolio}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="portfolio" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Portfolio
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Primary Work Location */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="primaryWorkLocation"
+                      name="primaryWorkLocation"
+                      type="checkbox"
+                      checked={standardQuestions.primaryWorkLocation}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="primaryWorkLocation" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Primary Work Location
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Age range */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="ageRange"
+                      name="ageRange"
+                      type="checkbox"
+                      checked={standardQuestions.ageRange}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="ageRange" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Age range
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Gender */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="gender"
+                      name="gender"
+                      type="checkbox"
+                      checked={standardQuestions.gender}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="gender" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Gender
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Spoken languages */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="spokenLanguages"
+                      name="spokenLanguages"
+                      type="checkbox"
+                      checked={standardQuestions.spokenLanguages}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="spokenLanguages" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Spoken languages
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Country of origin */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="countryOfOrigin"
+                      name="countryOfOrigin"
+                      type="checkbox"
+                      checked={standardQuestions.countryOfOrigin}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="countryOfOrigin" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Country of origin
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Ethnicity */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="ethnicity"
+                      name="ethnicity"
+                      type="checkbox"
+                      checked={standardQuestions.ethnicity}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="ethnicity" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Ethnicity
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Co-stars */}
+                  <div className="flex items-start p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="coStars"
+                      name="coStars"
+                      type="checkbox"
+                      checked={standardQuestions.coStars}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1"
+                    />
+                    <label htmlFor="coStars" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Co-stars
+                      <p className="text-xs text-gray-500 mt-1">
+                        Creators would've chosen any of: dog, cat, other pets, baby, kids(2-6), kids (7-12), teenagers, couple, friends, parents
+                      </p>
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Filming location */}
+                  <div className="flex items-start p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="filmingLocation"
+                      name="filmingLocation"
+                      type="checkbox"
+                      checked={standardQuestions.filmingLocation}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1"
+                    />
+                    <label htmlFor="filmingLocation" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Filming location
+                      <p className="text-xs text-gray-500 mt-1">
+                        Creators would've chosen any of: house, apartment, car, garden, podcast_setup, gaming_setup, gym_fitness_studio, in_house_laundry, home_office_study, countryside, city, beach
+                      </p>
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Small business */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="smallBusiness"
+                      name="smallBusiness"
+                      type="checkbox"
+                      checked={standardQuestions.smallBusiness}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="smallBusiness" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Small business
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Address for product delivery */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="addressForProductDelivery"
+                      name="addressForProductDelivery"
+                      type="checkbox"
+                      checked={standardQuestions.addressForProductDelivery}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="addressForProductDelivery" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Address for product delivery
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Mobile */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="mobile"
+                      name="mobile"
+                      type="checkbox"
+                      checked={standardQuestions.mobile}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="mobile" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Mobile
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Hair type */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="hairType"
+                      name="hairType"
+                      type="checkbox"
+                      checked={standardQuestions.hairType}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="hairType" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Hair type
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Hair colour */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="hairColour"
+                      name="hairColour"
+                      type="checkbox"
+                      checked={standardQuestions.hairColour}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="hairColour" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Hair colour
+                    </label>
+                  </div>
+
+                  {/* Checkbox for Piercings */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <input
+                      id="piercings"
+                      name="piercings"
+                      type="checkbox"
+                      checked={standardQuestions.piercings}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="piercings" className="ml-3 block text-base font-medium text-gray-700 cursor-pointer">
+                      Piercings
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bespoke Questions Section */}
+              <div className="mb-8">
+                <h2 className="text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+                  Bespoke Questions
+                </h2>
+                <p className="text-sm text-gray-600">
+                  This section is reserved for custom questions.
+                </p>
+              </div>
+
+              {/* Save Survey Configuration Button */}
+              <div className="mt-8">
+                <button
+                  onClick={handleSaveConfiguration}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-md shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75"
+                >
+                  Save Survey Configuration
+                </button>
+              </div>
+
+              {/* Feedback Message */}
+              {showFeedback && (
+                <div className="mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-md text-center shadow-md transition-opacity duration-500 ease-in-out">
+                  Survey configuration saved for this session!
+                </div>
+              )}
+            </div>
+          );
+        };
+
+        // FrontStageContent Component
+        const FrontStageContent = ({ navigateTo, standardQuestions, fictionalUsers, briefSummary, projectTitle }) => {
+          const [userNameInput, setUserNameInput] = React.useState('');
+          const [currentUserProfile, setCurrentUserProfile] = React.useState(null);
+          const [userAnswers, setUserAnswers] = React.useState({});
+          const [errorMessage, setErrorMessage] = React.useState('');
+
+          // Map Backstage question keys to fictional user profile keys
+          const questionToProfileKey = {
+            portfolio: 'portfolio',
+            primaryWorkLocation: 'primary_work_location',
+            ageRange: 'date_of_birth', // Will need age calculation
+            gender: 'gender',
+            spokenLanguages: 'languages_spoken_fluently',
+            countryOfOrigin: 'country_of_origin',
+            ethnicity: 'ethnicity',
+            coStars: 'co_stars',
+            filmingLocation: 'filming_location',
+            smallBusiness: 'small_business', // No direct mapping, will be a new input
+            addressForProductDelivery: 'Address',
+            mobile: 'Mobile',
+            hairType: 'hair_type',
+            hairColour: 'hair_colour',
+            piercings: 'piercings',
+          };
+
+          const findUserProfile = () => {
+            setErrorMessage('');
+            const foundUser = fictionalUsers.find(
+              (user) => user.name.toLowerCase() === userNameInput.toLowerCase()
+            );
+            if (foundUser) {
+              setCurrentUserProfile(foundUser);
+              // Initialize userAnswers with existing data or 'yes' for confirmation questions
+              const initialAnswers = {};
+              Object.keys(standardQuestions).forEach(qKey => {
+                if (standardQuestions[qKey]) { // If the question is ticked in Backstage
+                  const profileKey = questionToProfileKey[qKey];
+                  // Determine if data exists for the current question in the found user's profile
+                  const dataExists = foundUser && profileKey && foundUser[profileKey] !== null && foundUser[profileKey] !== undefined && (Array.isArray(foundUser[profileKey]) ? foundUser[profileKey].length > 0 : true);
+
+                  if (dataExists) {
+                    // If data exists, default to 'yes' for confirmation
+                    initialAnswers[qKey] = 'yes';
+                  } else {
+                    // If data doesn't exist, initialize as empty or appropriate default
+                    if (qKey === 'ageRange') initialAnswers[qKey] = ''; // For select
+                    else if (qKey === 'gender') initialAnswers[qKey] = ''; // For select
+                    else if (qKey === 'spokenLanguages' || qKey === 'coStars' || qKey === 'filmingLocation') initialAnswers[qKey] = []; // For multi-select/array
+                    else initialAnswers[qKey] = ''; // For text input
+                  }
+                  // Initialize override checkbox state
+                  initialAnswers[`${qKey}-override`] = false;
+                }
+              });
+              setUserAnswers(initialAnswers);
+            } else {
+              setCurrentUserProfile(null);
+              setUserAnswers({});
+              setErrorMessage('Profile not found. Please check the name.');
+            }
+          };
+
+          const handleAnswerChange = (questionKey, value) => {
+            setUserAnswers((prevAnswers) => ({
+              ...prevAnswers,
+              [questionKey]: value,
+            }));
+          };
+
+          const handleOverrideChange = (questionKey, checked) => {
+            setUserAnswers((prevAnswers) => ({
+              ...prevAnswers,
+              [`${questionKey}-override`]: checked,
+            }));
+          };
+
+          const handleSubmit = (event) => {
+            event.preventDefault();
+            if (!currentUserProfile) {
+              alert('Please find your profile first.');
+              return;
+            }
+            console.log('Creator Profile Submission for:', currentUserProfile.name);
+            console.log('Submitted Answers:', userAnswers);
+            alert('Creator profile submitted! (Check console for data)');
+          };
+
+          const renderQuestion = React.useCallback((questionKey) => {
+            const isTickedInBackstage = standardQuestions[questionKey];
+            if (!isTickedInBackstage) return null; // Only render if ticked in Backstage
+
+            const profileKey = questionToProfileKey[questionKey];
+            let hasData = currentUserProfile && profileKey && currentUserProfile[profileKey] !== null && currentUserProfile[profileKey] !== undefined && (Array.isArray(currentUserProfile[profileKey]) ? currentUserProfile[profileKey].length > 0 : true);
+            const currentValue = currentUserProfile ? currentUserProfile[profileKey] : null;
+
+            let questionText = '';
+            let dataDisplay = null;
+
+            switch (questionKey) {
+              case 'portfolio':
+                questionText = 'Portfolio';
+                if (hasData) {
+                  dataDisplay = <a href={currentValue} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{currentValue}</a>;
+                }
+                break;
+              case 'primaryWorkLocation':
+                questionText = 'Primary work location';
+                if (hasData) {
+                  dataDisplay = `${currentValue[0]} in ${currentValue[1]}`;
+                }
+                break;
+              case 'ageRange':
+                questionText = 'Age range';
+                if (hasData) {
+                  const age = calculateAge(currentValue);
+                  dataDisplay = `${age} years old (born ${currentValue})`;
+                }
+                break;
+              case 'gender':
+                questionText = 'Gender';
+                if (hasData) {
+                  dataDisplay = currentValue;
+                }
+                break;
+              case 'spokenLanguages':
+                questionText = 'Spoken languages';
+                if (hasData) {
+                  dataDisplay = currentValue.join(', ');
+                }
+                break;
+              case 'countryOfOrigin':
+                questionText = 'Country of origin';
+                if (hasData) {
+                  dataDisplay = currentValue;
+                }
+                break;
+              case 'ethnicity':
+                questionText = 'Ethnicity';
+                if (hasData) {
+                  dataDisplay = currentValue;
+                }
+                break;
+              case 'coStars':
+                questionText = 'Co-stars';
+                if (hasData) {
+                  dataDisplay = currentValue.join(', ');
+                }
+                break;
+              case 'filmingLocation':
+                questionText = 'Filming location';
+                if (hasData) {
+                  dataDisplay = currentValue.join(', ');
+                }
+                break;
+              case 'smallBusiness':
+                questionText = 'Small business';
+                // This field is not in the seeded data, so it will always be a new input
+                hasData = false; // Force it to be a new input
+                break;
+              case 'addressForProductDelivery':
+                questionText = 'Address';
+                if (hasData) {
+                  dataDisplay = currentValue;
+                }
+                break;
+              case 'mobile':
+                questionText = 'Mobile';
+                if (hasData) {
+                  dataDisplay = currentValue;
+                }
+                break;
+              case 'hairType':
+                questionText = 'Hair type';
+                if (hasData) {
+                  dataDisplay = currentValue;
+                }
+                break;
+              case 'hairColour':
+                questionText = 'Hair colour';
+                if (hasData) {
+                  dataDisplay = currentValue;
+                }
+                break;
+              case 'piercings':
+                questionText = 'Piercings';
+                if (hasData) {
+                  dataDisplay = currentValue;
+                }
+                break;
+              default:
+                return null;
+            }
+
+            return (
+              <div key={questionKey} className="bg-white p-6 rounded-lg shadow-md mb-6 border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">{questionText}</h3>
+                {hasData ? (
+                  <>
+                    <p className="text-gray-700 mb-2">
+                      We have your {questionText.toLowerCase()} down as{' '}
+                      <span className="font-medium text-blue-700">{dataDisplay}</span>.
+                    </p>
+                    <p className="text-gray-600 mb-3">Is this still correct/up to date?</p>
+                    <div className="flex items-center space-x-4">
+                      <label className="inline-flex items-center">
+                        <input
+                          type="radio"
+                          name={`confirm-${questionKey}`}
+                          value="yes"
+                          checked={userAnswers[questionKey] === 'yes'}
+                          onChange={() => handleAnswerChange(questionKey, 'yes')}
+                          className="form-radio h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition duration-150 ease-in-out"
+                        />
+                        <span className="ml-2 text-gray-700">Yes</span>
+                      </label>
+                      <label className="inline-flex items-center">
+                        <input
+                          type="radio"
+                          name={`confirm-${questionKey}`}
+                          value="no"
+                          checked={userAnswers[questionKey] === 'no'}
+                          onChange={() => handleAnswerChange(questionKey, 'no')}
+                          className="form-radio h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition duration-150 ease-in-out"
+                        />
+                        <span className="ml-2 text-gray-700">No</span>
+                      </label>
+                    </div>
+                    {userAnswers[questionKey] === 'no' && (
+                      <div className="mt-4">
+                        <label htmlFor={`${questionKey}-new`} className="block text-sm font-medium text-gray-700 mb-2">
+                          Please provide the updated {questionText.toLowerCase()}:
+                        </label>
+                        {questionKey === 'ageRange' ? (
+                          <select
+                            id={`${questionKey}-new`}
+                            name={`${questionKey}-new`}
+                            value={userAnswers[`${questionKey}-new`] || ''}
+                            onChange={(e) => handleAnswerChange(`${questionKey}-new`, e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                          >
+                            <option value="">Select an age range</option>
+                            <option value="18-24">18-24</option>
+                            <option value="25-34">25-34</option>
+                            <option value="35-44">35-44</option>
+                            <option value="45-54">45-54</option>
+                            <option value="55+">55+</option>
+                          </select>
+                        ) : questionKey === 'gender' ? (
+                          <select
+                            id={`${questionKey}-new`}
+                            name={`${questionKey}-new`}
+                            value={userAnswers[`${questionKey}-new`] || ''}
+                            onChange={(e) => handleAnswerChange(`${questionKey}-new`, e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                          >
+                            <option value="">Select your gender</option>
+                            <option value="man">Man</option>
+                            <option value="woman">Woman</option>
+                            <option value="non_binary">Non-binary</option>
+                            <option value="prefer_not_to_say">Prefer not to say</option>
+                          </select>
+                        ) : (
+                          <input
+                            type="text"
+                            id={`${questionKey}-new`}
+                            name={`${questionKey}-new`}
+                            value={userAnswers[`${questionKey}-new`] || ''}
+                            onChange={(e) => handleAnswerChange(`${questionKey}-new`, e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            placeholder={`Enter updated ${questionText.toLowerCase()}`}
+                          />
+                        )}
+                        <div className="mt-3 flex items-center">
+                          <input
+                            type="checkbox"
+                            id={`${questionKey}-override`}
+                            name={`${questionKey}-override`}
+                            checked={userAnswers[`${questionKey}-override`] || false}
+                            onChange={(e) => handleOverrideChange(questionKey, e.target.checked)}
+                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <label htmlFor={`${questionKey}-override`} className="ml-2 text-sm text-gray-700">
+                            Replace what's on my profile
+                          </label>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <p className="text-gray-600 mb-3">
+                      It looks like we don't have your {questionText.toLowerCase()} in your profile yet. What is it?
+                    </p>
+                    {questionKey === 'ageRange' ? (
+                      <select
+                        id={questionKey}
+                        name={questionKey}
+                        value={userAnswers[questionKey] || ''}
+                        onChange={(e) => handleAnswerChange(questionKey, e.target.value)}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      >
+                        <option value="">Select an age range</option>
+                        <option value="18-24">18-24</option>
+                        <option value="25-34">25-34</option>
+                        <option value="35-44">35-44</option>
+                        <option value="45-54">45-54</option>
+                        <option value="55+">55+</option>
+                      </select>
+                    ) : questionKey === 'gender' ? (
+                      <select
+                        id={questionKey}
+                        name={questionKey}
+                        value={userAnswers[questionKey] || ''}
+                        onChange={(e) => handleAnswerChange(questionKey, e.target.value)}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      >
+                        <option value="">Select your gender</option>
+                        <option value="man">Man</option>
+                        <option value="woman">Woman</option>
+                        <option value="non_binary">Non-binary</option>
+                        <option value="prefer_not_to_say">Prefer not to say</option>
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        id={questionKey}
+                        name={questionKey}
+                        value={userAnswers[questionKey] || ''}
+                        onChange={(e) => handleAnswerChange(questionKey, e.target.value)}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder={`Enter your ${questionText.toLowerCase()}`}
+                      />
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          }, [standardQuestions, currentUserProfile, userAnswers, handleAnswerChange, handleOverrideChange]);
+
+
+          return (
+            <div className="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-xl relative">
+              {/* Navigation Button for Backstage */}
+              <div className="absolute top-4 right-4">
+                <button
+                  onClick={() => navigateTo('backstage')}
+                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75"
+                >
+                  View Internal/Community UX (Create Questions)
+                </button>
+              </div>
+
+              <h1 className="text-3xl font-extrabold text-gray-800 mb-8 pb-4 border-b-2 border-gray-200">
+                Creator UX
+              </h1>
+
+              {/* User Profile Finder */}
+              <div className="mb-8 p-4 border border-gray-300 rounded-md bg-gray-50">
+                <label htmlFor="userNameInput" className="block text-sm font-medium text-gray-700 mb-2">
+                  Enter Your Name to Begin:
+                </label>
+                <div className="flex space-x-3">
+                  <input
+                    type="text"
+                    id="userNameInput"
+                    name="userNameInput"
+                    value={userNameInput}
+                    onChange={(e) => setUserNameInput(e.target.value)}
+                    className="flex-grow px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="e.g., Liam 12"
+                  />
+                  <button
+                    onClick={findUserProfile}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
+                  >
+                    Find My Profile
+                  </button>
+                </div>
+                {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
+              </div>
+
+              {currentUserProfile && (
+                <>
+                  <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                    <h2 className="text-xl font-bold text-blue-800 mb-2">
+                      Hello {currentUserProfile.name}! So pleased to see you're interested in {projectTitle}.
+                    </h2>
+                    {/* Brief Requirement Summary from Backstage - MOVED HERE */}
+                    <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-md">
+                      <h3 className="text-lg font-bold text-gray-800 mb-2">Brief requirement summary</h3>
+                      <p className="text-gray-700 whitespace-pre-wrap">{briefSummary}</p>
+                    </div>
+                    <p className="text-gray-700 mt-4">
+                      Before we can proceed, please answer the following questions.
+                    </p>
+                  </div>
+
+
+
+                  <form onSubmit={handleSubmit}>
+                    {/* Dynamically rendered questions */}
+                    {Object.keys(standardQuestions).map((qKey) => renderQuestion(qKey))}
+
+                    <button
+                      type="submit"
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-md shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 mt-6"
+                    >
+                      Submit Profile Data
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>
+          );
+        };
+
+        // Main App component with routing
+        const App = () => {
+          const [currentPage, setCurrentPage] = React.useState('backstage'); // 'backstage' or 'frontstage'
+          const [fictionalUsers] = React.useState(generateFictionalUsers()); // Generate users once
+
+          // State for project details (shared if needed, but here specific to Backstage)
+          const [projectTitle, setProjectTitle] = React.useState('');
+          const [projectCode, setProjectCode] = React.useState('');
+          // Initialize briefSummary as an empty string to show placeholder
+          const [briefSummary, setBriefSummary] = React.useState('');
+
+          // State for standard profile questions (shared if needed, but here specific to Backstage)
+          const [standardQuestions, setStandardQuestions] = React.useState({
+            portfolio: false,
+            primaryWorkLocation: false,
+            ageRange: false,
+            gender: false,
+            spokenLanguages: false,
+            countryOfOrigin: false,
+            ethnicity: false,
+            coStars: false,
+            filmingLocation: false,
+            smallBusiness: false,
+            addressForProductDelivery: false,
+            mobile: false,
+            hairType: false,
+            hairColour: false,
+            piercings: false,
+          });
+
+          // Handle checkbox changes for Backstage
+          const handleCheckboxChange = (event) => {
+            const { name, checked } = event.target;
+            setStandardQuestions((prevQuestions) => ({
+              ...prevQuestions,
+              [name]: checked,
+            }));
+          };
+
+          const navigateTo = (page) => {
+            setCurrentPage(page);
+          };
+
+          // Effect to log state changes (for debugging/demonstration)
+          React.useEffect(() => {
+            // console.log('Current Page:', currentPage);
+            // console.log('Backstage Project Title:', projectTitle);
+            // console.log('Backstage Standard Questions:', standardQuestions);
+          }, [currentPage, projectTitle, standardQuestions]);
+
+
+          return (
+            <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8 font-sans antialiased">
+              {currentPage === 'backstage' ? (
+                <BackstageContent
+                  projectTitle={projectTitle}
+                  setProjectTitle={setProjectTitle}
+                  projectCode={projectCode}
+                  setProjectCode={setProjectCode}
+                  briefSummary={briefSummary}
+                  setBriefSummary={setBriefSummary}
+                  standardQuestions={standardQuestions}
+                  handleCheckboxChange={handleCheckboxChange}
+                  navigateTo={navigateTo}
+                />
+              ) : (
+                <FrontStageContent
+                  navigateTo={navigateTo}
+                  standardQuestions={standardQuestions}
+                  fictionalUsers={fictionalUsers}
+                  briefSummary={briefSummary}
+                  projectTitle={projectTitle} // Pass projectTitle to FrontStageContent
+                />
+              )}
+            </div>
+          );
+        };
+
+        // Render the App component into the root div
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
